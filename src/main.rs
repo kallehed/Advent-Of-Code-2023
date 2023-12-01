@@ -52,6 +52,5 @@ use day24::*;
 use day25::*;
 
 fn main() {
-    println!("Hello, world!");
-    day1_1();
+    day1_2();
 }
