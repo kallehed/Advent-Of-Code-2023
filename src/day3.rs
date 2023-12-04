@@ -2,7 +2,9 @@ use regex::Regex;
 
 // go through all characters, find numeric ones and check for symbols near them
 pub fn day3_1() {
-    let s = std::fs::read_to_string("src/day3.txt").unwrap().into_bytes();
+    let s = std::fs::read_to_string("src/day3.txt")
+        .unwrap()
+        .into_bytes();
 
     let len = s.iter().position(|&x| x == b'\n').unwrap() + 1;
     println!("len: {}", len);
@@ -12,7 +14,6 @@ pub fn day3_1() {
     let mut start_numeric: i64 = -1;
     let mut was_good_num = false;
     for (i, c) in s.iter().enumerate() {
-
         if c.is_ascii_digit() {
             if start_numeric == -1 {
                 start_numeric = i as _;
@@ -20,18 +21,27 @@ pub fn day3_1() {
             // check neighbors for weird symbols
             let i = i as i64;
             let len = len as i64;
-            let neighs = [i - 1, i + 1, i + len, i + len -1, i + len + 1, i - len - 1, i - len, i -len + 1];
+            let neighs = [
+                i - 1,
+                i + 1,
+                i + len,
+                i + len - 1,
+                i + len + 1,
+                i - len - 1,
+                i - len,
+                i - len + 1,
+            ];
             for neigh in neighs {
-                if neigh < 0 || neigh >= s.len() as i64 {continue;}
+                if neigh < 0 || neigh >= s.len() as i64 {
+                    continue;
+                }
                 let co = s[neigh as usize];
                 if !co.is_ascii_digit() && co != b'.' && co != b'\n' {
                     was_good_num = true;
                 }
-            } 
-
-        }
-        else if start_numeric != -1 {
-            // found whole number 
+            }
+        } else if start_numeric != -1 {
+            // found whole number
             let num_str = &s[(start_numeric as usize)..i];
             let num: usize = std::str::from_utf8(num_str).unwrap().parse().unwrap();
             if was_good_num {
@@ -39,9 +49,7 @@ pub fn day3_1() {
             }
             start_numeric = -1;
             was_good_num = false;
-
         }
-
     }
     println!("total: {}", total);
 }
@@ -50,8 +58,9 @@ pub fn day3_1() {
 // the asterisks position - if another number finds itself with the same asterisk it will find the
 // previous number in the hashmap and add their product to the total
 pub fn day3_2() {
-    let s = std::fs::read_to_string("src/day3.txt").unwrap().into_bytes();
-
+    let s = std::fs::read_to_string("src/day3.txt")
+        .unwrap()
+        .into_bytes();
 
     let len = s.iter().position(|&x| x == b'\n').unwrap() + 1;
     println!("len: {}", len);
@@ -73,25 +82,34 @@ pub fn day3_2() {
             // check neighbors for weird symbols
             let i = i as i64;
             let len = len as i64;
-            let neighs = [i - 1, i + 1, i + len, i + len -1, i + len + 1, i - len - 1, i - len, i -len + 1];
+            let neighs = [
+                i - 1,
+                i + 1,
+                i + len,
+                i + len - 1,
+                i + len + 1,
+                i - len - 1,
+                i - len,
+                i - len + 1,
+            ];
             for neigh in neighs {
-                if neigh < 0 || neigh >= s.len() as i64 {continue;}
+                if neigh < 0 || neigh >= s.len() as i64 {
+                    continue;
+                }
                 let co = s[neigh as usize];
                 if co == b'*' {
                     ast_pos = neigh;
                     was_good_num = true;
                 }
-            } 
-        }
-        else if start_numeric != -1 {
-            // found whole number 
+            }
+        } else if start_numeric != -1 {
+            // found whole number
             let num_str = &s[(start_numeric as usize)..i];
             let num: i64 = std::str::from_utf8(num_str).unwrap().parse().unwrap();
             if was_good_num {
                 if set.contains_key(&ast_pos) {
                     total += *set.get(&ast_pos).unwrap() * num as i64;
-                }
-                else {
+                } else {
                     set.insert(ast_pos as i64, num as i64);
                 }
             }

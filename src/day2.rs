@@ -33,10 +33,12 @@ pub fn day2_1() {
             }
             println!("cols: {}, {}, {}", c_red, c_green, c_blue);
             if c_red > red || c_blue > blue || c_green > green {
-                   any_chunk_failed = true; 
+                any_chunk_failed = true;
             }
         }
-        if !any_chunk_failed {total += game_id + 1;}
+        if !any_chunk_failed {
+            total += game_id + 1;
+        }
     }
     println!("total: {}", total);
 }
@@ -67,10 +69,15 @@ pub fn day2_2() {
                     it => panic!("got {}", it),
                 }
             }
-            if c_red > min_red {min_red = c_red;}
-            if c_green > min_green {min_green = c_green;}
-            if c_blue > min_blue {min_blue = c_blue;}
-
+            if c_red > min_red {
+                min_red = c_red;
+            }
+            if c_green > min_green {
+                min_green = c_green;
+            }
+            if c_blue > min_blue {
+                min_blue = c_blue;
+            }
         }
         total += min_red * min_green * min_blue;
     }

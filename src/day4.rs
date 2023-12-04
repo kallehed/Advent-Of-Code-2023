@@ -10,7 +10,7 @@ pub fn day4_1() {
         let (first, second) = line.split_once('|').unwrap();
 
         for cap in reg.captures_iter(first) {
-            winning.insert(cap[0].parse::<i64>().unwrap()); 
+            winning.insert(cap[0].parse::<i64>().unwrap());
         }
 
         let mut score = 0;
@@ -18,8 +18,7 @@ pub fn day4_1() {
             if winning.contains(&cap[0].parse::<i64>().unwrap()) {
                 if score == 0 {
                     score = 1;
-                }
-                else {
+                } else {
                     score *= 2;
                 }
             }
@@ -38,14 +37,13 @@ pub fn day4_2() {
         let mut winning = std::collections::HashSet::new();
         my_lines += 1;
         let pos = line.chars().position(|x| x == ':').unwrap();
-        let line = &line[(pos+1)..];
-        for (idx,part) in line.split('|').enumerate() {
+        let line = &line[(pos + 1)..];
+        for (idx, part) in line.split('|').enumerate() {
             if idx == 0 {
                 for cap in reg.captures_iter(part) {
-                    winning.insert(cap[0].parse::<i64>().unwrap()); 
+                    winning.insert(cap[0].parse::<i64>().unwrap());
                 }
-            }
-            else {
+            } else {
                 let mut score = 0;
                 for cap in reg.captures_iter(part) {
                     if winning.contains(&cap[0].parse::<i64>().unwrap()) {
@@ -60,5 +58,4 @@ pub fn day4_2() {
     }
     let sum: i64 = cards.iter().take(my_lines).sum();
     println!("sum: {}", sum);
-
 }
