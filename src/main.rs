@@ -52,5 +52,5 @@ use day8::*;
 use day9::*;
 
 fn main() {
-    day8_2();
+    day9_2();
 }
