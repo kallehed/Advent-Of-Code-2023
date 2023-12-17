@@ -1,4 +1,4 @@
-use std::collections::{HashSet, HashMap};
+use std::collections::{HashSet, HashMap, BinaryHeap};
 
 use regex::Regex;
 
@@ -11,7 +11,7 @@ pub fn day17_1() {
             map.last_mut().unwrap().push(ch as u8 - b'0');
         }
     }
-    println!("map: {:?}", map);
+    // println!("map: {:?}", map);
 
     #[derive(Clone, Copy, Debug, Hash, Eq, PartialEq)]
     enum Dir {
@@ -21,69 +21,95 @@ pub fn day17_1() {
         Up,
     }
 
-    // y, x, y_dir, x_dir, steps_walked, heat_loss
-    let mut walkers: HashSet<(i16, i16, i8, i8, i16, i32)> = HashSet::new();
+    #[derive(Eq, PartialEq, Debug)]
+    struct Crucible {
+        y: i16,
+        x: i16,
+        walked_straight: i16,
+        dir: Dir,
+        heat_loss: i16,
+    }
 
-    // (y, x, steps_walked), (heat_loss)
-    let mut djikstra: HashMap<(i16, i16, i16, Dir), i32> = HashMap::new();
+    impl PartialOrd for Crucible {
+        fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+            other.heat_loss.partial_cmp(&self.heat_loss)
+        }
+    }
+    impl Ord for Crucible {
+        fn cmp(&self, other: &Self) -> std::cmp::Ordering {
+            other.heat_loss.cmp(&self.heat_loss)
+        }
+    }
 
-    walkers.insert((0, 0, 1, 0, 0, 0));
+    // (y, x, steps_walked, dir), (heat_loss)
+    let mut djikstra: HashMap<(i16, i16, i16, Dir), i16> = HashMap::new();
 
-    fn dive(stuff: (i16, i16, i16), y_dir: i8, x_dir: i8, heat_loss: i32, djikstra: &mut HashMap<(i16, i16, i16, Dir), i32>, map: &Vec<Vec<u8>>) {
+    let mut heap: BinaryHeap<Crucible> = BinaryHeap::new();
+
+    heap.push(Crucible { y: 0, x: 0, walked_straight: 0, dir: Dir::Right, heat_loss: -(map[0][0] as i16) });
+    heap.push(Crucible { y: 0, x: 0, walked_straight: 0, dir: Dir::Down, heat_loss: -(map[0][0] as i16) });
+
+    while heap.len() > 0 {
+        let e = heap.pop().unwrap();
+        // println!("pos: {}, {}", e.y, e.x);
+        // println!("heap: {:?}", heap);
         // in bounds
-        if !(stuff.0 >= 0 && stuff.1 >= 0 && (stuff.0 as isize) < map.len() as isize && (stuff.1 as isize)  < map[0].len() as isize) {
-            return;
+        if !(e.y >= 0 && e.x >= 0 && (e.y as isize) < map.len() as isize && (e.x as isize)  < map[0].len() as isize) {
+            continue;
         }
-        let new_heat_loss = heat_loss + map[stuff.0 as usize][stuff.1 as usize] as i32;
-        if new_heat_loss >= 1261 {return;}
+        let new_heat_loss = e.heat_loss + map[e.y as usize][e.x as usize] as i16;
+        //if new_heat_loss >= 1418 {continue;}
+        
+        if let Some(&prev_heat_loss) = djikstra.get(&(e.y, e.x, e.walked_straight, e.dir)) {
+            if new_heat_loss >= prev_heat_loss {
+                continue;
+            }
+        };
+        djikstra.insert((e.y, e.x, e.walked_straight, e.dir), new_heat_loss);
 
-        let dir = if y_dir == 1 {Dir::Down} else if y_dir == -1 {Dir::Up} else if x_dir == 1 {Dir::Right} else {Dir::Left};
+        // try to escape when at the end
+        // if stuff.0 as usize == map.len() - 1 && stuff.1 as usize == map[0].len() - 1 {
+        //     return;
+        // }
+        let y_dir = if e.dir == Dir::Down {1} else if e.dir == Dir::Up {-1} else {0}; 
+        let x_dir = if e.dir == Dir::Right {1} else if e.dir == Dir::Left {-1} else {0}; 
 
-        let o_stuff = (stuff.0, stuff.1, stuff.2, dir);
-
-        match djikstra.get(&o_stuff) {
-            Some(&prev_heat_loss) => {
-                if new_heat_loss >= prev_heat_loss {
-                    return;
-                } 
-            },
-            None => {
-
-            },
-        }
-        djikstra.insert(o_stuff, new_heat_loss);
-
-       if stuff.2 < 3 {
+        if e.walked_straight < 3 {
            // can go forward
-           let new_stuff = (stuff.0 + y_dir as i16, stuff.1 + x_dir as i16 , stuff.2 + 1);
-           dive(new_stuff, y_dir, x_dir, new_heat_loss, djikstra, map);
+           heap.push(Crucible { y: e.y + y_dir, x: e.x + x_dir, walked_straight: e.walked_straight + 1, dir: e.dir, heat_loss: new_heat_loss });
        } 
        // do left and right
-       //left
         
-       {
-           let new_dir = (-x_dir, y_dir);
-           dive((stuff.0 + new_dir.0 as i16, stuff.1 + new_dir.1 as i16, 1), new_dir.0, new_dir.1, new_heat_loss, djikstra, map);
-       }
+       if true{
+           //left
+           {
+                let new_dir = (-x_dir, y_dir);
+                let ac_dir = if new_dir.0 == 1 {Dir::Down} else if new_dir.0 == -1 {Dir::Up} else if new_dir.1 == 1 {Dir::Right} else {Dir::Left};
+                heap.push(Crucible { y: e.y + new_dir.0, x: e.x + new_dir.1, walked_straight: 1, dir: ac_dir, heat_loss: new_heat_loss });
+           }
 
-       //right
-       {
-           let new_dir = (x_dir, -y_dir);
-           dive((stuff.0 + new_dir.0 as i16, stuff.1 + new_dir.1 as i16, 1), new_dir.0, new_dir.1, new_heat_loss, djikstra, map);
+           //right
+           {
+                let new_dir = (x_dir, -y_dir);
+                let ac_dir = if new_dir.0 == 1 {Dir::Down} else if new_dir.0 == -1 {Dir::Up} else if new_dir.1 == 1 {Dir::Right} else {Dir::Left};
+                heap.push(Crucible { y: e.y + new_dir.0, x: e.x + new_dir.1, walked_straight: 1, dir: ac_dir, heat_loss: new_heat_loss });
+           }
        }
     }
 
-    dive((0,0,0), 1, 0, -(map[0][0] as i32), &mut djikstra, &map);
+    // println!("djikstra: {:?}", djikstra);
 
-    println!("djikstra: {:?}", djikstra);
-
+    let mut min = 10000;
     for res in djikstra.iter() {
 
         if res.0.0 as usize == map.len() - 1 && res.0.1 as usize == map[0].len() - 1 {
-
-            println!("res: {:?}", res.1);
+            println!("res: {:?}, steps: {}", res.1, res.0.2);
+            if *res.1 < min {
+                min = *res.1;
+            }
         }
     }
+    println!("min: {min}");
 }
 
 pub fn day17_2() {
@@ -95,7 +121,7 @@ pub fn day17_2() {
             map.last_mut().unwrap().push(ch as u8 - b'0');
         }
     }
-    println!("map: {:?}", map);
+    // println!("map: {:?}", map);
 
     #[derive(Clone, Copy, Debug, Hash, Eq, PartialEq)]
     enum Dir {
@@ -105,69 +131,88 @@ pub fn day17_2() {
         Up,
     }
 
-    // (y, x, steps_walked), (heat_loss)
-    let mut djikstra: HashMap<(i16, i16, i16, Dir), i32> = HashMap::new();
+    #[derive(Eq, PartialEq, Debug)]
+    struct Crucible {
+        y: i16,
+        x: i16,
+        walked_straight: i16,
+        dir: Dir,
+        heat_loss: i16,
+    }
 
+    impl PartialOrd for Crucible {
+        fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+            other.heat_loss.partial_cmp(&self.heat_loss)
+        }
+    }
+    impl Ord for Crucible {
+        fn cmp(&self, other: &Self) -> std::cmp::Ordering {
+            other.heat_loss.cmp(&self.heat_loss)
+        }
+    }
 
-    fn dive(stuff: (i16, i16, i16), y_dir: i8, x_dir: i8, heat_loss: i32, djikstra: &mut HashMap<(i16, i16, i16, Dir), i32>, map: &Vec<Vec<u8>>) {
+    // (y, x, steps_walked, dir), (heat_loss)
+    let mut djikstra: HashMap<(i16, i16, i16, Dir), i16> = HashMap::new();
+
+    let mut heap: BinaryHeap<Crucible> = BinaryHeap::new();
+
+    heap.push(Crucible { y: 0, x: 0, walked_straight: 0, dir: Dir::Right, heat_loss: -(map[0][0] as i16) });
+    heap.push(Crucible { y: 0, x: 0, walked_straight: 0, dir: Dir::Down, heat_loss: -(map[0][0] as i16) });
+
+    while heap.len() > 0 {
+        let e = heap.pop().unwrap();
+        // println!("pos: {}, {}", e.y, e.x);
+        // println!("heap: {:?}", heap);
         // in bounds
-        if !(stuff.0 >= 0 && stuff.1 >= 0 && (stuff.0 as isize) < map.len() as isize && (stuff.1 as isize)  < map[0].len() as isize) {
-            return;
+        if !(e.y >= 0 && e.x >= 0 && (e.y as isize) < map.len() as isize && (e.x as isize)  < map[0].len() as isize) {
+            continue;
         }
-        let new_heat_loss = heat_loss + map[stuff.0 as usize][stuff.1 as usize] as i32;
-        if new_heat_loss >= 1418 {return;}
+        let new_heat_loss = e.heat_loss + map[e.y as usize][e.x as usize] as i16;
+        //if new_heat_loss >= 1418 {continue;}
+        
+        if let Some(&prev_heat_loss) = djikstra.get(&(e.y, e.x, e.walked_straight, e.dir)) {
+            if new_heat_loss >= prev_heat_loss {
+                continue;
+            }
+        };
+        djikstra.insert((e.y, e.x, e.walked_straight, e.dir), new_heat_loss);
 
-        let dir = if y_dir == 1 {Dir::Down} else if y_dir == -1 {Dir::Up} else if x_dir == 1 {Dir::Right} else {Dir::Left};
+        // try to escape when at the end
+        // if stuff.0 as usize == map.len() - 1 && stuff.1 as usize == map[0].len() - 1 {
+        //     return;
+        // }
+        let y_dir = if e.dir == Dir::Down {1} else if e.dir == Dir::Up {-1} else {0}; 
+        let x_dir = if e.dir == Dir::Right {1} else if e.dir == Dir::Left {-1} else {0}; 
 
-        let o_stuff = (stuff.0, stuff.1, stuff.2, dir);
-
-        match djikstra.get(&o_stuff) {
-            Some(&prev_heat_loss) => {
-                if new_heat_loss >= prev_heat_loss {
-                    return;
-                } 
-            },
-            None => {
-
-            },
-        }
-        djikstra.insert(o_stuff, new_heat_loss);
-
-        if stuff.0 as usize == map.len() - 1 && stuff.1 as usize == map[0].len() - 1 {
-            return;
-        }
-
-       if stuff.2 < 10 {
+        if e.walked_straight < 10 {
            // can go forward
-           let new_stuff = (stuff.0 + y_dir as i16, stuff.1 + x_dir as i16 , stuff.2 + 1);
-           dive(new_stuff, y_dir, x_dir, new_heat_loss, djikstra, map);
+           heap.push(Crucible { y: e.y + y_dir, x: e.x + x_dir, walked_straight: e.walked_straight + 1, dir: e.dir, heat_loss: new_heat_loss });
        } 
        // do left and right
         
-       if stuff.2 >= 4 {
+       if e.walked_straight >= 4 {
            //left
            {
-               let new_dir = (-x_dir, y_dir);
-               dive((stuff.0 + new_dir.0 as i16, stuff.1 + new_dir.1 as i16, 1), new_dir.0, new_dir.1, new_heat_loss, djikstra, map);
+                let new_dir = (-x_dir, y_dir);
+                let ac_dir = if new_dir.0 == 1 {Dir::Down} else if new_dir.0 == -1 {Dir::Up} else if new_dir.1 == 1 {Dir::Right} else {Dir::Left};
+                heap.push(Crucible { y: e.y + new_dir.0, x: e.x + new_dir.1, walked_straight: 1, dir: ac_dir, heat_loss: new_heat_loss });
            }
 
            //right
            {
-               let new_dir = (x_dir, -y_dir);
-               dive((stuff.0 + new_dir.0 as i16, stuff.1 + new_dir.1 as i16, 1), new_dir.0, new_dir.1, new_heat_loss, djikstra, map);
+                let new_dir = (x_dir, -y_dir);
+                let ac_dir = if new_dir.0 == 1 {Dir::Down} else if new_dir.0 == -1 {Dir::Up} else if new_dir.1 == 1 {Dir::Right} else {Dir::Left};
+                heap.push(Crucible { y: e.y + new_dir.0, x: e.x + new_dir.1, walked_straight: 1, dir: ac_dir, heat_loss: new_heat_loss });
            }
        }
     }
 
-    dive((0,0,0), 1, 0, -(map[0][0] as i32), &mut djikstra, &map);
-    dive((0,0,0), 0, 1, -(map[0][0] as i32), &mut djikstra, &map);
+    // println!("djikstra: {:?}", djikstra);
 
-    println!("djikstra: {:?}", djikstra);
-
-    let mut min = 1000000;
+    let mut min = 10000;
     for res in djikstra.iter() {
 
-        if res.0.0 as usize == map.len() - 1 && res.0.1 as usize == map[0].len() - 1 {
+        if res.0.0 as usize == map.len() - 1 && res.0.1 as usize == map[0].len() - 1 && res.0.2 >= 4 {
 
             println!("res: {:?}, steps: {}", res.1, res.0.2);
             if *res.1 < min {
@@ -176,5 +221,4 @@ pub fn day17_2() {
         }
     }
     println!("min: {min}");
-
 }
