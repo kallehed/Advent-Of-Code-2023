@@ -1,4 +1,4 @@
-#![allow(dead_code, unused_imports, unused_variables)]
+#![allow(unused_imports, unused_variables)]
 
 mod day1;
 mod day10;
@@ -52,5 +52,5 @@ use day8::*;
 use day9::*;
 
 fn main() {
-    day16_2();
+    day17_2();
 }
