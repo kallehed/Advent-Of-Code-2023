@@ -37,7 +37,7 @@ pub fn day19_1() {
         struct Workflow {
             work: Vec<(i8, MoreOrLess, i32, i32)>,
             last: i32,
-        }
+        } 
 
         let workflows = {
             let mut workflows = Vec::<Workflow>::new();
