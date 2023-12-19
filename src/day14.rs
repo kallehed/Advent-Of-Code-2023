@@ -1,4 +1,4 @@
-use std::collections::{HashSet, HashMap};
+use std::collections::{HashMap, HashSet};
 
 use regex::Regex;
 
@@ -13,25 +13,33 @@ pub fn day14_1() {
     }
     let mut map: Vec<Vec<Tile>> = Vec::new();
     for line in s.lines() {
-        map.push(line.chars().map(|c| { match c {'.' => Tile::Air, '#' => Tile::Fast, 'O' => Tile::Stone, _ => panic!()}}).collect())
+        map.push(
+            line.chars()
+                .map(|c| match c {
+                    '.' => Tile::Air,
+                    '#' => Tile::Fast,
+                    'O' => Tile::Stone,
+                    _ => panic!(),
+                })
+                .collect(),
+        )
     }
     println!("map: {:?}", map);
 
     fn up_fall(map: &mut [Vec<Tile>]) {
-
         // loop until all are down
         loop {
             let mut changed = false;
             for y in 1..map.len() {
                 for x in 0..map[0].len() {
-                    if map[y][x] == Tile::Stone && map[y-1][x] == Tile::Air {
+                    if map[y][x] == Tile::Stone && map[y - 1][x] == Tile::Air {
                         map[y - 1][x] = Tile::Stone;
                         map[y][x] = Tile::Air;
                         changed = true;
                     }
                 }
             }
-        
+
             if !changed {
                 break;
             }
@@ -54,8 +62,6 @@ pub fn day14_1() {
 
     let total = score_map(&map);
     println!("total: {}", total);
-
-
 }
 
 pub fn day14_2() {
@@ -69,31 +75,39 @@ pub fn day14_2() {
     }
     let mut map: Vec<Vec<Tile>> = Vec::new();
     for line in s.lines() {
-        map.push(line.chars().map(|c| { match c {'.' => Tile::Air, '#' => Tile::Fast, 'O' => Tile::Stone, _ => panic!()}}).collect())
+        map.push(
+            line.chars()
+                .map(|c| match c {
+                    '.' => Tile::Air,
+                    '#' => Tile::Fast,
+                    'O' => Tile::Stone,
+                    _ => panic!(),
+                })
+                .collect(),
+        )
     }
     println!("map: {:?}", map);
 
     // here I do intentionally slow simulation, because I guessed there would be a repeating
     // pattern, because the rocks can't really fall in super interesting ways
-    // so I simulate it for like a thousand iterations, and then look for a repeat 
-    // then calculate how many iterations are left to get the same result as 
+    // so I simulate it for like a thousand iterations, and then look for a repeat
+    // then calculate how many iterations are left to get the same result as
     // 1000000000 would give me.
 
     fn up_fall(map: &mut [Vec<Tile>]) {
-
         // loop until all are down
         loop {
             let mut changed = false;
             for y in 1..map.len() {
                 for x in 0..map[0].len() {
-                    if map[y][x] == Tile::Stone && map[y-1][x] == Tile::Air {
+                    if map[y][x] == Tile::Stone && map[y - 1][x] == Tile::Air {
                         map[y - 1][x] = Tile::Stone;
                         map[y][x] = Tile::Air;
                         changed = true;
                     }
                 }
             }
-        
+
             if !changed {
                 break;
             }
@@ -101,20 +115,19 @@ pub fn day14_2() {
     }
 
     fn left_fall(map: &mut [Vec<Tile>]) {
-
         // loop until all are down
         loop {
             let mut changed = false;
             for y in 0..map.len() {
                 for x in 1..map[0].len() {
-                    if map[y][x] == Tile::Stone && map[y][x-1] == Tile::Air {
+                    if map[y][x] == Tile::Stone && map[y][x - 1] == Tile::Air {
                         map[y][x - 1] = Tile::Stone;
                         map[y][x] = Tile::Air;
                         changed = true;
                     }
                 }
             }
-        
+
             if !changed {
                 break;
             }
@@ -125,14 +138,14 @@ pub fn day14_2() {
             let mut changed = false;
             for y in 0..(map.len() - 1) {
                 for x in 0..map[0].len() {
-                    if map[y][x] == Tile::Stone && map[y+1][x] == Tile::Air {
+                    if map[y][x] == Tile::Stone && map[y + 1][x] == Tile::Air {
                         map[y + 1][x] = Tile::Stone;
                         map[y][x] = Tile::Air;
                         changed = true;
                     }
                 }
             }
-        
+
             if !changed {
                 break;
             }
@@ -143,14 +156,14 @@ pub fn day14_2() {
             let mut changed = false;
             for y in 0..map.len() {
                 for x in 0..(map[0].len() - 1) {
-                    if map[y][x] == Tile::Stone && map[y][x+1] == Tile::Air {
+                    if map[y][x] == Tile::Stone && map[y][x + 1] == Tile::Air {
                         map[y][x + 1] = Tile::Stone;
                         map[y][x] = Tile::Air;
                         changed = true;
                     }
                 }
             }
-        
+
             if !changed {
                 break;
             }
@@ -168,7 +181,7 @@ pub fn day14_2() {
         }
         return score;
     }
-    let total_iters: usize =  1000000000;
+    let total_iters: usize = 1000000000;
     let start_iterations: usize = 1048; // put a big number here so that it reaches it's repetition state
     for i in 0..start_iterations {
         up_fall(&mut map);
@@ -179,17 +192,20 @@ pub fn day14_2() {
     let after_start_iters = map.clone();
 
     // wait for repeat
-    let repeat_period = {let mut i = 0; loop {
-        up_fall(&mut map);
-        left_fall(&mut map);
-        down_fall(&mut map);
-        right_fall(&mut map);
-        i += 1;
-        if map == after_start_iters {
-            // found repeat
-           break i;
+    let repeat_period = {
+        let mut i = 0;
+        loop {
+            up_fall(&mut map);
+            left_fall(&mut map);
+            down_fall(&mut map);
+            right_fall(&mut map);
+            i += 1;
+            if map == after_start_iters {
+                // found repeat
+                break i;
+            }
         }
-    }};
+    };
     println!("repeat period: {}", repeat_period);
 
     // how many more iters to get to the 1000000000 map
@@ -205,5 +221,4 @@ pub fn day14_2() {
     // println!("map: {:?}", map);
     let total = score_map(&map);
     println!("total: {}", total);
-
 }

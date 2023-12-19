@@ -10,11 +10,10 @@ pub fn day8_1() {
     let mut go_instrs = Vec::new();
 
     for go in goes.chars() {
-        go_instrs.push(
-            match go {
-                'L' => 0,
-                'R' => 1,
-                a => panic!("wierd chard: {a}")
+        go_instrs.push(match go {
+            'L' => 0,
+            'R' => 1,
+            a => panic!("wierd chard: {a}"),
         });
     }
     println!("go insts: {:?}", go_instrs);
@@ -25,14 +24,15 @@ pub fn day8_1() {
     let mut inc_num = 0;
     let mut map: HashMap<isize, (isize, isize)> = HashMap::new();
 
-    let mut place_to_num: std::collections::HashMap<String, isize> = std::collections::HashMap::new();
+    let mut place_to_num: std::collections::HashMap<String, isize> =
+        std::collections::HashMap::new();
     for line in rest.lines() {
         println!("{}", line);
         for cap in reg.captures_iter(line) {
             println!("a:");
-            let from = &cap[1]; 
-            let left = &cap[2]; 
-            let right = &cap[3]; 
+            let from = &cap[1];
+            let left = &cap[2];
+            let right = &cap[3];
             if !place_to_num.contains_key(from) {
                 place_to_num.insert(from.to_string(), inc_num);
                 inc_num += 1;
@@ -45,9 +45,14 @@ pub fn day8_1() {
                 place_to_num.insert(right.to_string(), inc_num);
                 inc_num += 1;
             }
-            map.insert(*place_to_num.get(from).unwrap(), (*place_to_num.get(left).unwrap(), *place_to_num.get(right).unwrap()));
+            map.insert(
+                *place_to_num.get(from).unwrap(),
+                (
+                    *place_to_num.get(left).unwrap(),
+                    *place_to_num.get(right).unwrap(),
+                ),
+            );
         }
-
     }
     println!("map: {:?}", map);
 
@@ -64,7 +69,7 @@ pub fn day8_1() {
             let next_num = match go {
                 0 => next.0,
                 1 => next.1,
-                _ => panic!()
+                _ => panic!(),
             };
             at = next_num;
             if at == end {
@@ -83,11 +88,10 @@ pub fn day8_2() {
     let mut go_instrs = Vec::new();
 
     for go in goes.chars() {
-        go_instrs.push(
-            match go {
-                'L' => 0,
-                'R' => 1,
-                a => panic!("wierd chard: {a}")
+        go_instrs.push(match go {
+            'L' => 0,
+            'R' => 1,
+            a => panic!("wierd chard: {a}"),
         });
     }
     println!("go insts: {:?}", go_instrs);
@@ -102,14 +106,15 @@ pub fn day8_2() {
     let mut ends_with_z: HashSet<isize> = HashSet::new();
     let mut ends_with_a: HashSet<isize> = HashSet::new();
 
-    let mut place_to_num: std::collections::HashMap<String, isize> = std::collections::HashMap::new();
+    let mut place_to_num: std::collections::HashMap<String, isize> =
+        std::collections::HashMap::new();
     for line in rest.lines() {
         println!("{}", line);
         for cap in reg.captures_iter(line) {
             println!("a:");
-            let from = &cap[1]; 
-            let left = &cap[2]; 
-            let right = &cap[3]; 
+            let from = &cap[1];
+            let left = &cap[2];
+            let right = &cap[3];
             if !place_to_num.contains_key(from) {
                 place_to_num.insert(from.to_string(), inc_num);
                 inc_num += 1;
@@ -134,14 +139,18 @@ pub fn day8_2() {
             if right.ends_with("Z") {
                 ends_with_z.insert(*place_to_num.get(right).unwrap());
             }
-            map.insert(*place_to_num.get(from).unwrap(), (*place_to_num.get(left).unwrap(), *place_to_num.get(right).unwrap()));
+            map.insert(
+                *place_to_num.get(from).unwrap(),
+                (
+                    *place_to_num.get(left).unwrap(),
+                    *place_to_num.get(right).unwrap(),
+                ),
+            );
         }
-
     }
     println!("map: {:?}", map);
     println!("ends with z: {:?}", ends_with_z);
     println!("ends with a: {:?}", ends_with_a);
-
 
     let start_at: i64 = (go_instrs.len() as i64 * map.len() as i64) * 20;
     let mut vecs = Vec::new();
@@ -153,25 +162,29 @@ pub fn day8_2() {
         let mut on_good_vec = Vec::new();
         'leloop: loop {
             for (go_idx, go) in go_instrs.iter().enumerate() {
-                let next = map.get(&one).unwrap(); 
-                    let next_num = match go {
-                        0 => next.0,
-                        1 => next.1,
-                        _ => panic!()
-                    };
-                    one = next_num;
-                    num_steps += 1;
-                    if one == start_at_place && go_idx_at_start == go_idx as _ {
-                        println!("took {} to get back to {}", num_steps - start_at as isize, start_at_place);
-                        break 'leloop;
-                    }
-                    if num_steps == start_at as isize {
-                        start_at_place = one;
-                        go_idx_at_start = go_idx as _;
-                    }
-                    if start_at_place != -1 {
-                        on_good_vec.push(ends_with_z.contains(&one));
-                    }
+                let next = map.get(&one).unwrap();
+                let next_num = match go {
+                    0 => next.0,
+                    1 => next.1,
+                    _ => panic!(),
+                };
+                one = next_num;
+                num_steps += 1;
+                if one == start_at_place && go_idx_at_start == go_idx as _ {
+                    println!(
+                        "took {} to get back to {}",
+                        num_steps - start_at as isize,
+                        start_at_place
+                    );
+                    break 'leloop;
+                }
+                if num_steps == start_at as isize {
+                    start_at_place = one;
+                    go_idx_at_start = go_idx as _;
+                }
+                if start_at_place != -1 {
+                    on_good_vec.push(ends_with_z.contains(&one));
+                }
             }
         }
         vecs.push(on_good_vec);
@@ -183,7 +196,7 @@ pub fn day8_2() {
     // println!("{:?}", vecs[0]);
 
     // assume each one only contains one true value
-   
+
     let mut good_places = Vec::new();
     let mut sizes: Vec<i64> = Vec::new();
     for (vecidx, vec) in vecs.iter().enumerate() {
@@ -201,7 +214,6 @@ pub fn day8_2() {
     println!("started with: {}", start_at);
 
     println!(" put this into wolframalpha and you will get the answer ");
-
 
     // println!("took: {}", num_steps);
 }

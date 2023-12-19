@@ -1,10 +1,12 @@
 use regex::Regex;
 
 pub fn day11_1() {
-    let s = std::fs::read_to_string("src/day11.txt").unwrap().into_bytes();
+    let s = std::fs::read_to_string("src/day11.txt")
+        .unwrap()
+        .into_bytes();
 
     let mut grid: Vec<&[u8]> = s.split(|&x| x == b'\n').collect();
-    grid.remove(grid.len()-1);
+    grid.remove(grid.len() - 1);
 
     println!("grid: {:?}", grid);
 
@@ -16,16 +18,14 @@ pub fn day11_1() {
         // all items this row are empty
         if line.iter().all(|x| *x == b'.') {
             y_pos += 1; // double this rows length
-        }
-        else {
+        } else {
             // else, look at the row
             let mut x_pos: isize = 0;
             for (idx, c) in line.into_iter().enumerate() {
                 // if vertical line here is empty, increase x
-                if grid.iter().all(|x| x[idx as usize] == b'.' ) {
-                    x_pos += 1; // double 
-                }
-                else if *c == b'#' {
+                if grid.iter().all(|x| x[idx as usize] == b'.') {
+                    x_pos += 1; // double
+                } else if *c == b'#' {
                     galax.push((y_pos, x_pos));
                 }
                 x_pos += 1;
@@ -46,10 +46,12 @@ pub fn day11_1() {
 }
 
 pub fn day11_2() {
-    let s = std::fs::read_to_string("src/day11.txt").unwrap().into_bytes();
+    let s = std::fs::read_to_string("src/day11.txt")
+        .unwrap()
+        .into_bytes();
 
     let mut grid: Vec<&[u8]> = s.split(|&x| x == b'\n').collect();
-    grid.remove(grid.len()-1);
+    grid.remove(grid.len() - 1);
 
     println!("grid: {:?}", grid);
 
@@ -60,15 +62,13 @@ pub fn day11_2() {
         if line.iter().all(|x| *x == b'.') {
             // all in this row are empty
             y_pos += 999999; // one million - 1
-        }
-        else {
+        } else {
             let mut x_pos: isize = 0;
             for (idx, c) in line.into_iter().enumerate() {
                 // if vertical line is empty, inc x
-                if grid.iter().all(|x| x[idx as usize] == b'.' ) {
+                if grid.iter().all(|x| x[idx as usize] == b'.') {
                     x_pos += 999999;
-                }
-                else if *c == b'#' {
+                } else if *c == b'#' {
                     galax.push((y_pos, x_pos));
                 }
                 x_pos += 1;

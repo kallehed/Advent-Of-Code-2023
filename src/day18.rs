@@ -8,11 +8,11 @@ pub fn day18_1() {
     {
         for line in s.lines() {
             let dir = match line.chars().nth(0).unwrap() {
-                'R' => (0,1),
+                'R' => (0, 1),
                 'L' => (0, -1),
-                'U' => (-1,0),
-                'D' => (1,0),
-                _ => panic!()
+                'U' => (-1, 0),
+                'D' => (1, 0),
+                _ => panic!(),
             };
             let steps = line.split(' ').nth(1).unwrap().parse::<i32>().unwrap();
 
@@ -28,11 +28,10 @@ pub fn day18_1() {
         // map.insert((0, 0));
 
         for &go in goes.iter() {
-
             for _ in 0..go.1 {
-                y += go.0.0;
-                x += go.0.1;
-                map.insert((y,x));
+                y += go.0 .0;
+                x += go.0 .1;
+                map.insert((y, x));
             }
         }
         println!("map: {:?}", map);
@@ -40,11 +39,11 @@ pub fn day18_1() {
         for y in (-200)..(200) {
             println!();
             for x in (-20)..(150) {
-                let mut ch = match map.contains(&(y,x)) {
+                let mut ch = match map.contains(&(y, x)) {
                     true => '#',
-                    false => '.'
+                    false => '.',
                 };
-                if y == 0 && x == 0{
+                if y == 0 && x == 0 {
                     ch = 'X';
                 }
                 print!("{}", ch);
@@ -58,13 +57,12 @@ pub fn day18_1() {
         let mut interior = HashSet::new();
 
         let mut new_places = Vec::new();
-        new_places.push((5,5));
+        new_places.push((5, 5));
 
         while new_places.len() != 0 {
-
             let mut new_place = new_places.pop().unwrap();
 
-            if (!map.contains(&new_place)) &&  (!interior.contains(&new_place)) {
+            if (!map.contains(&new_place)) && (!interior.contains(&new_place)) {
                 interior.insert(new_place);
 
                 // also add neighbors
@@ -83,9 +81,12 @@ pub fn day18_1() {
                 new_places.push(new_place);
             }
         }
-        println!("interior: {:?}, sum: {}", interior.len(),  interior.len() + map.len());
+        println!(
+            "interior: {:?}, sum: {}",
+            interior.len(),
+            interior.len() + map.len()
+        );
     }
-
 }
 
 pub fn day18_2() {
@@ -94,11 +95,11 @@ pub fn day18_2() {
     {
         for line in s.lines() {
             let dir = match line.split(' ').nth(2).unwrap().chars().nth(7).unwrap() {
-                '0' => (0,1),
+                '0' => (0, 1),
                 '2' => (0, -1),
-                '3' => (-1,0),
-                '1' => (1,0),
-                _ => panic!()
+                '3' => (-1, 0),
+                '1' => (1, 0),
+                _ => panic!(),
             };
             let hex = &line.split(' ').nth(2).unwrap()[2..7];
             println!("hex: {:?}", hex);
@@ -108,8 +109,7 @@ pub fn day18_2() {
             for c in hex.chars().rev() {
                 if c.is_ascii_digit() {
                     total += (c as u8 - b'0') as i32 * base;
-                }
-                else {
+                } else {
                     println!("{}", c);
                     total += (10 + (c as u8 - b'a')) as i32 * base;
                 }
@@ -129,11 +129,10 @@ pub fn day18_2() {
         // map.insert((0, 0));
 
         for &go in goes.iter() {
-
             for _ in 0..go.1 {
-                y += go.0.0;
-                x += go.0.1;
-                map.push((y,x));
+                y += go.0 .0;
+                x += go.0 .1;
+                map.push((y, x));
             }
         }
         // println!("map: {:?}", map);
@@ -159,7 +158,8 @@ pub fn day18_2() {
         for wind in map.windows(2) {
             shoe += wind[0].1 as i64 * wind[1].0 as i64 - wind[1].1 as i64 * wind[0].0 as i64;
         }
-        shoe += (map.last().unwrap().1 * map.first().unwrap().0 - map.first().unwrap().1 * map.last().unwrap().0) as i64;
+        shoe += (map.last().unwrap().1 * map.first().unwrap().0
+            - map.first().unwrap().1 * map.last().unwrap().0) as i64;
         shoe /= 2;
 
         println!("shoe: {:?}", shoe);
@@ -167,8 +167,6 @@ pub fn day18_2() {
         let area = shoe + map.len() as i64 / 2 + 1;
 
         println!("area: {:?}", area);
-
-
     }
 
     // let mut min_y = 100000;
@@ -178,7 +176,7 @@ pub fn day18_2() {
     // for &pos in map.iter() {
     //     if pos.0 < min_y {
     //         min_y = pos.0;
-    //     } 
+    //     }
     //     if pos.0 > max_y {
     //         max_y = pos.0;
     //     }
@@ -190,8 +188,4 @@ pub fn day18_2() {
     //     }
     // }
     // println!("min_y: {}, max_y: {}, min_x: {}, max_x: {}", min_y, max_y, min_x, max_x);
-
 }
-
-
-

@@ -13,16 +13,17 @@ pub fn day7_1() {
     for line in s.lines() {
         let (c_cards, bid) = line.split_once(' ').unwrap();
 
-        let mut b_cards: Vec<i32> = c_cards.chars().map(|c| {
-            match c {
+        let mut b_cards: Vec<i32> = c_cards
+            .chars()
+            .map(|c| match c {
                 'A' => 14,
                 'K' => 13,
                 'Q' => 12,
                 'J' => 11,
                 'T' => 10,
-                other => {(c as u8 - b'0') as i32}
-            } 
-        }).collect();
+                other => (c as u8 - b'0') as i32,
+            })
+            .collect();
         orig_cards.push(b_cards.clone());
         b_cards.sort();
         b_cards.reverse();
@@ -35,31 +36,36 @@ pub fn day7_1() {
 
     for card in cards.iter() {
         if card.iter().all(|&c| card[0] == c) {
-           types.push(6);
-        }
-        else if card.iter().skip(1).all(|&c| card[1] == c) || card.iter().take(4).all(|&c| card[0] == c) {
+            types.push(6);
+        } else if card.iter().skip(1).all(|&c| card[1] == c)
+            || card.iter().take(4).all(|&c| card[0] == c)
+        {
             types.push(5);
-        }
-        else if (card[0] == card[1] && card[1] == card[2] && card[3] == card[4]) || (card[0] == card[1] && card[2] == card[3] && card[3] == card[4]) {
+        } else if (card[0] == card[1] && card[1] == card[2] && card[3] == card[4])
+            || (card[0] == card[1] && card[2] == card[3] && card[3] == card[4])
+        {
             types.push(4);
-        }
-        else if (card[0] == card[1] && card[1] == card[2]) || (card[4] == card[3] && card[3] == card[2]) || (card[1] == card[2] && card[2] == card[3]) {
+        } else if (card[0] == card[1] && card[1] == card[2])
+            || (card[4] == card[3] && card[3] == card[2])
+            || (card[1] == card[2] && card[2] == card[3])
+        {
             types.push(3);
-        }
-        else if {
+        } else if {
             let mut count = 0;
             count += (card[0] == card[1]) as i32;
             count += (card[1] == card[2]) as i32;
             count += (card[2] == card[3]) as i32;
             count += (card[3] == card[4]) as i32;
-            if count >= 2 {true} else {false}
+            if count >= 2 {
+                true
+            } else {
+                false
+            }
         } {
             types.push(2);
-        }
-        else if card.windows(2).any(|c| c[0] == c[1]) {
+        } else if card.windows(2).any(|c| c[0] == c[1]) {
             types.push(1);
-        }
-        else {
+        } else {
             types.push(0);
         }
     }
@@ -74,16 +80,13 @@ pub fn day7_1() {
     real.sort_by(|x, y| {
         if x.1 < y.1 {
             Ordering::Less
-        }
-        else if x.1 > y.1 {
+        } else if x.1 > y.1 {
             Ordering::Greater
-        }
-        else {
+        } else {
             for i in 0..x.2.len() {
                 if x.2[i] < y.2[i] {
                     return Ordering::Less;
-                }
-                else if x.2[i] > y.2[i] {
+                } else if x.2[i] > y.2[i] {
                     return Ordering::Greater;
                 }
             }
@@ -93,7 +96,7 @@ pub fn day7_1() {
     });
     println!("reals: {:?}", real);
     for r in real.iter().enumerate() {
-        total += (r.0 + 1) as i32 * r.1.0;
+        total += (r.0 + 1) as i32 * r.1 .0;
     }
     println!("total {total}");
 }
@@ -109,16 +112,17 @@ pub fn day7_2() {
     for line in s.lines() {
         let (c_cards, bid) = line.split_once(' ').unwrap();
 
-        let mut b_cards: Vec<i32> = c_cards.chars().map(|c| {
-            match c {
+        let mut b_cards: Vec<i32> = c_cards
+            .chars()
+            .map(|c| match c {
                 'A' => 14,
                 'K' => 13,
                 'Q' => 12,
                 'J' => 0,
                 'T' => 10,
-                other => {(c as u8 - b'0') as i32}
-            } 
-        }).collect();
+                other => (c as u8 - b'0') as i32,
+            })
+            .collect();
         orig_cards.push(b_cards.clone());
         b_cards.sort();
         b_cards.reverse();
@@ -132,7 +136,9 @@ pub fn day7_2() {
     cards.iter_mut().for_each(|card| {
         let mut appearances = [0; 15];
         for c in card.iter() {
-            if *c == 0 {continue;}
+            if *c == 0 {
+                continue;
+            }
             appearances[*c as usize] += 1;
         }
         let mut appear_most_num = 14;
@@ -157,31 +163,36 @@ pub fn day7_2() {
 
     for card in cards.iter() {
         if card.iter().all(|&c| card[0] == c) {
-           types.push(6);
-        }
-        else if card.iter().skip(1).all(|&c| card[1] == c) || card.iter().take(4).all(|&c| card[0] == c) {
+            types.push(6);
+        } else if card.iter().skip(1).all(|&c| card[1] == c)
+            || card.iter().take(4).all(|&c| card[0] == c)
+        {
             types.push(5);
-        }
-        else if (card[0] == card[1] && card[1] == card[2] && card[3] == card[4]) || (card[0] == card[1] && card[2] == card[3] && card[3] == card[4]) {
+        } else if (card[0] == card[1] && card[1] == card[2] && card[3] == card[4])
+            || (card[0] == card[1] && card[2] == card[3] && card[3] == card[4])
+        {
             types.push(4);
-        }
-        else if (card[0] == card[1] && card[1] == card[2]) || (card[4] == card[3] && card[3] == card[2]) || (card[1] == card[2] && card[2] == card[3]) {
+        } else if (card[0] == card[1] && card[1] == card[2])
+            || (card[4] == card[3] && card[3] == card[2])
+            || (card[1] == card[2] && card[2] == card[3])
+        {
             types.push(3);
-        }
-        else if {
+        } else if {
             let mut count = 0;
             count += (card[0] == card[1]) as i32;
             count += (card[1] == card[2]) as i32;
             count += (card[2] == card[3]) as i32;
             count += (card[3] == card[4]) as i32;
-            if count >= 2 {true} else {false}
+            if count >= 2 {
+                true
+            } else {
+                false
+            }
         } {
             types.push(2);
-        }
-        else if card.windows(2).any(|c| c[0] == c[1]) {
+        } else if card.windows(2).any(|c| c[0] == c[1]) {
             types.push(1);
-        }
-        else {
+        } else {
             types.push(0);
         }
     }
@@ -196,16 +207,13 @@ pub fn day7_2() {
     real.sort_by(|x, y| {
         if x.1 < y.1 {
             Ordering::Less
-        }
-        else if x.1 > y.1 {
+        } else if x.1 > y.1 {
             Ordering::Greater
-        }
-        else {
+        } else {
             for i in 0..x.2.len() {
                 if x.2[i] < y.2[i] {
                     return Ordering::Less;
-                }
-                else if x.2[i] > y.2[i] {
+                } else if x.2[i] > y.2[i] {
                     return Ordering::Greater;
                 }
             }
@@ -215,8 +223,7 @@ pub fn day7_2() {
     });
     println!("reals: {:?}", real);
     for r in real.iter().enumerate() {
-        total += (r.0 + 1) as i32 * r.1.0;
+        total += (r.0 + 1) as i32 * r.1 .0;
     }
     println!("total {total}");
-
 }

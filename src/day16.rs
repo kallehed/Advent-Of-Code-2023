@@ -2,8 +2,6 @@ use std::collections::HashSet;
 
 use regex::Regex;
 
-
-
 // HAS TO BE COMPILED IN RELEASE MODE, OTHERWISE THE INTEGER UNDERFLOWS (WHICH ARE DELIBERATE) WILL
 // CRASH
 
@@ -29,7 +27,7 @@ pub fn day16_1() {
                 '-' => Tile::Horizontal,
                 '/' => Tile::FwSlash,
                 '\\' => Tile::BkSlash,
-                _ => panic!()
+                _ => panic!(),
             };
             map.last_mut().unwrap().push(t);
         }
@@ -39,7 +37,7 @@ pub fn day16_1() {
     let mut all_beams = HashSet::<(usize, usize, i8, i8)>::new();
 
     let mut beams = HashSet::<(usize, usize, i8, i8)>::new();
-    beams.insert((0,0, 0, 1));
+    beams.insert((0, 0, 0, 1));
 
     let mut beams_2 = HashSet::<(usize, usize, i8, i8)>::new();
 
@@ -52,9 +50,7 @@ pub fn day16_1() {
         beams_2.clear();
         for beam in beams.iter() {
             if beam.0 < map.len() && beam.1 < map[0].len() {
-
-            }
-            else {
+            } else {
                 continue;
             }
             let tile = map[beam.0][beam.1];
@@ -64,42 +60,64 @@ pub fn day16_1() {
             match tile {
                 Tile::Air => {
                     // continue
-                    beams_2.insert(((beam.0 as isize  + beam.2 as isize ) as _, (beam.1 as isize + beam.3 as isize) as _ , beam.2, beam.3));
-                },
+                    beams_2.insert((
+                        (beam.0 as isize + beam.2 as isize) as _,
+                        (beam.1 as isize + beam.3 as isize) as _,
+                        beam.2,
+                        beam.3,
+                    ));
+                }
                 Tile::Vertical => {
                     if beam.2 != 0 {
                         // travelling through it, continue
-                        beams_2.insert(((beam.0 as isize + beam.2 as isize ) as _, (beam.1 as isize + beam.3 as isize) as _ , beam.2, beam.3));
-                    }
-                    else {
+                        beams_2.insert((
+                            (beam.0 as isize + beam.2 as isize) as _,
+                            (beam.1 as isize + beam.3 as isize) as _,
+                            beam.2,
+                            beam.3,
+                        ));
+                    } else {
                         // go down and up from here
                         beams_2.insert((beam.0 + 1, beam.1, 1, 0));
                         beams_2.insert((beam.0 - 1, beam.1, -1, 0));
                     }
-                },
+                }
                 Tile::Horizontal => {
                     if beam.3 != 0 {
                         // travelling through it, continue
-                        beams_2.insert(((beam.0 as isize + beam.2 as isize ) as _, (beam.1 as isize + beam.3 as isize) as _ , beam.2, beam.3));
-                    }
-                    else {
+                        beams_2.insert((
+                            (beam.0 as isize + beam.2 as isize) as _,
+                            (beam.1 as isize + beam.3 as isize) as _,
+                            beam.2,
+                            beam.3,
+                        ));
+                    } else {
                         // go down and up from here
                         beams_2.insert((beam.0, beam.1 + 1, 0, 1));
                         beams_2.insert((beam.0, beam.1 - 1, 0, -1));
                     }
-                },
+                }
                 Tile::FwSlash => {
                     let dir = (-beam.3, -beam.2);
-                    beams_2.insert(((beam.0 as isize + dir.0 as isize) as _, (beam.1 as isize + dir.1 as isize) as _, dir.0, dir.1));
-                },
+                    beams_2.insert((
+                        (beam.0 as isize + dir.0 as isize) as _,
+                        (beam.1 as isize + dir.1 as isize) as _,
+                        dir.0,
+                        dir.1,
+                    ));
+                }
                 Tile::BkSlash => {
                     let dir = (beam.3, beam.2);
-                    beams_2.insert(((beam.0 as isize + dir.0 as isize) as _, (beam.1 as isize + dir.1 as isize) as _, dir.0, dir.1));
-                },
+                    beams_2.insert((
+                        (beam.0 as isize + dir.0 as isize) as _,
+                        (beam.1 as isize + dir.1 as isize) as _,
+                        dir.0,
+                        dir.1,
+                    ));
+                }
             }
         }
         beams.clone_from(&beams_2);
-
     }
     println!("total: {}", tiles_energized.len());
 }
@@ -127,7 +145,7 @@ pub fn day16_2() {
                 '-' => Tile::Horizontal,
                 '/' => Tile::FwSlash,
                 '\\' => Tile::BkSlash,
-                _ => panic!()
+                _ => panic!(),
             };
             map.last_mut().unwrap().push(t);
         }
@@ -151,9 +169,7 @@ pub fn day16_2() {
             beams_2.clear();
             for beam in beams.iter() {
                 if beam.0 < map.len() && beam.1 < map[0].len() {
-
-                }
-                else {
+                } else {
                     continue;
                 }
                 let tile = map[beam.0][beam.1];
@@ -163,42 +179,64 @@ pub fn day16_2() {
                 match tile {
                     Tile::Air => {
                         // continue
-                        beams_2.insert(((beam.0 as isize  + beam.2 as isize ) as _, (beam.1 as isize + beam.3 as isize) as _ , beam.2, beam.3));
-                    },
+                        beams_2.insert((
+                            (beam.0 as isize + beam.2 as isize) as _,
+                            (beam.1 as isize + beam.3 as isize) as _,
+                            beam.2,
+                            beam.3,
+                        ));
+                    }
                     Tile::Vertical => {
                         if beam.2 != 0 {
                             // travelling through it, continue
-                            beams_2.insert(((beam.0 as isize + beam.2 as isize ) as _, (beam.1 as isize + beam.3 as isize) as _ , beam.2, beam.3));
-                        }
-                        else {
+                            beams_2.insert((
+                                (beam.0 as isize + beam.2 as isize) as _,
+                                (beam.1 as isize + beam.3 as isize) as _,
+                                beam.2,
+                                beam.3,
+                            ));
+                        } else {
                             // go down and up from here
                             beams_2.insert((beam.0 + 1, beam.1, 1, 0));
                             beams_2.insert((beam.0 - 1, beam.1, -1, 0));
                         }
-                    },
+                    }
                     Tile::Horizontal => {
                         if beam.3 != 0 {
                             // travelling through it, continue
-                            beams_2.insert(((beam.0 as isize + beam.2 as isize ) as _, (beam.1 as isize + beam.3 as isize) as _ , beam.2, beam.3));
-                        }
-                        else {
+                            beams_2.insert((
+                                (beam.0 as isize + beam.2 as isize) as _,
+                                (beam.1 as isize + beam.3 as isize) as _,
+                                beam.2,
+                                beam.3,
+                            ));
+                        } else {
                             // go down and up from here
                             beams_2.insert((beam.0, beam.1 + 1, 0, 1));
                             beams_2.insert((beam.0, beam.1 - 1, 0, -1));
                         }
-                    },
+                    }
                     Tile::FwSlash => {
                         let dir = (-beam.3, -beam.2);
-                        beams_2.insert(((beam.0 as isize + dir.0 as isize) as _, (beam.1 as isize + dir.1 as isize) as _, dir.0, dir.1));
-                    },
+                        beams_2.insert((
+                            (beam.0 as isize + dir.0 as isize) as _,
+                            (beam.1 as isize + dir.1 as isize) as _,
+                            dir.0,
+                            dir.1,
+                        ));
+                    }
                     Tile::BkSlash => {
                         let dir = (beam.3, beam.2);
-                        beams_2.insert(((beam.0 as isize + dir.0 as isize) as _, (beam.1 as isize + dir.1 as isize) as _, dir.0, dir.1));
-                    },
+                        beams_2.insert((
+                            (beam.0 as isize + dir.0 as isize) as _,
+                            (beam.1 as isize + dir.1 as isize) as _,
+                            dir.0,
+                            dir.1,
+                        ));
+                    }
                 }
             }
             beams.clone_from(&beams_2);
-
         }
         return tiles_energized.len();
     }
@@ -233,5 +271,4 @@ pub fn day16_2() {
     }
 
     println!("highest: {}", highest);
-
 }

@@ -24,26 +24,31 @@ pub fn day5_1() {
         }
         if line.len() == 0 {
             continue;
-        } 
+        }
         let mut imports = [0; 3];
         for (idx, cap) in reg.captures_iter(line).enumerate() {
-            imports[idx] = cap[0].parse().unwrap(); 
+            imports[idx] = cap[0].parse().unwrap();
         }
         // destination,  source, and length
-        map.last_mut().unwrap().push((imports[1], imports[0], imports[2]));
+        map.last_mut()
+            .unwrap()
+            .push((imports[1], imports[0], imports[2]));
     }
     println!("end: {:?}", map);
 
     for ma in map {
         // map nums through ma
-        nums = nums.iter().map(|num| {
-            for m in ma.iter() {
-                if (m.0..(m.0 + m.2)).contains(num) {
-                    return (*num - m.0) + m.1;
+        nums = nums
+            .iter()
+            .map(|num| {
+                for m in ma.iter() {
+                    if (m.0..(m.0 + m.2)).contains(num) {
+                        return (*num - m.0) + m.1;
+                    }
                 }
-            }
-            return *num;
-        }).collect();
+                return *num;
+            })
+            .collect();
     }
     nums.sort();
     println!("nums: {:?}", nums[0]);
@@ -71,7 +76,7 @@ pub fn day5_2() {
         nums.push((ns[0], ns[1] + ns[0]));
     }
 
-    println!("nums: " );
+    println!("nums: ");
     for line in rest.split('\n') {
         if line.ends_with(':') {
             map.push(Vec::new());
@@ -79,13 +84,15 @@ pub fn day5_2() {
         }
         if line.len() == 0 {
             continue;
-        } 
+        }
         let mut imports = [0; 3];
         for (idx, cap) in reg.captures_iter(line).enumerate() {
-            imports[idx] = cap[0].parse().unwrap(); 
+            imports[idx] = cap[0].parse().unwrap();
         }
         // destination,  source, and length
-        map.last_mut().unwrap().push((imports[1], imports[0], imports[2]));
+        map.last_mut()
+            .unwrap()
+            .push((imports[1], imports[0], imports[2]));
     }
     println!("end: ");
 
@@ -99,8 +106,10 @@ pub fn day5_2() {
             let mut number = 0;
             for m in ma.iter() {
                 let range = (num.0 - m.0 + m.1, num.1 - m.0 + m.1);
-                let new_r = (range.0.max(m.1), range.1.min(m.1 + m.2) );
-                if new_r.1 - new_r.0 < 0 {continue;}
+                let new_r = (range.0.max(m.1), range.1.min(m.1 + m.2));
+                if new_r.1 - new_r.0 < 0 {
+                    continue;
+                }
                 new_nums.push(new_r);
                 number += 1;
             }

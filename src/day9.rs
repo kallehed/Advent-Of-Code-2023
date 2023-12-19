@@ -8,16 +8,15 @@ pub fn day9_1() {
         for pair in nums.windows(2) {
             vec.push(pair[1] - pair[0]);
         }
-        if vec.iter().all(|x|*x == vec[0]) {
+        if vec.iter().all(|x| *x == vec[0]) {
             return vec[0];
-        }
-        else {
+        } else {
             let val = algo(&vec) + vec.last().unwrap();
             println!("passing on: {val}");
-            return val ;
+            return val;
         }
     }
-    
+
     let reg = Regex::new(r"-?\d+").unwrap();
     let mut vec = Vec::new();
     let mut total = 0;
@@ -33,11 +32,9 @@ pub fn day9_1() {
         total += got;
     }
     println!("total: {}", total);
-
 }
 
 pub fn day9_2() {
-
     let s = std::fs::read_to_string("src/day9.txt").unwrap();
 
     fn algo(nums: &[i64]) -> i64 {
@@ -45,16 +42,15 @@ pub fn day9_2() {
         for pair in nums.windows(2) {
             vec.push(pair[1] - pair[0]);
         }
-        if vec.iter().all(|x|*x == vec[0]) {
+        if vec.iter().all(|x| *x == vec[0]) {
             return vec[0];
-        }
-        else {
+        } else {
             let val = -algo(&vec) + vec.first().unwrap();
             println!("passing on: {val}");
-            return val ;
+            return val;
         }
     }
-    
+
     let reg = Regex::new(r"-?\d+").unwrap();
     let mut vec = Vec::new();
     let mut total = 0;
