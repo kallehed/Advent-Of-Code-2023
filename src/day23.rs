@@ -109,7 +109,7 @@ pub fn day23_2_real() {
     }
     println!("map: {:?}", map);
     const WAYS: [(i32, i32); 4] = [(-1,0),(0,1),(1,0),(0,-1),]; 
-    fn recurse(map: &[Vec<Tile>], pos: (i16, i16), set: &mut HashSet<(i16, i16)>, highest: &mut i64) -> i64 {
+    fn recurse(map: &mut [Vec<Tile>], pos: (i16, i16), steps: i64, highest: &mut i64) -> i64 {
 
         // valid where we are?
 
@@ -123,41 +123,34 @@ pub fn day23_2_real() {
 
         if pos.0 == map.len() as i16 - 1 {
             // reached end
-            if set.len() as i64 > *highest {
-                *highest = set.len() as i64;
+            if steps > *highest {
+                *highest = steps;
                 println!("cur highest: {:?}", *highest);
             }
-            return set.len() as i64;
+            return steps;
         }
 
         // add position to set as of now
-        if !set.insert(pos) {
-            // was not newly inserted
-            return 0;
-        }
+        map[pos.0 as usize][pos.1 as usize] = Tile::Block;
 
-        let res = match map[pos.0 as usize][pos.1 as usize] {
-            Tile::Air => {
-                let mut best = 0;
-                for (idx, way) in WAYS.iter().enumerate() {
-                    let wy = way.0;
-                    let wx = way.1;
-                    let res = recurse(map, (pos.0 + wy as i16, pos.1 + wx as i16), set, highest);
-                    if res > best {
-                        best = res;
-                    }
+        let res = {
+            let mut best = 0;
+            for (idx, way) in WAYS.iter().enumerate() {
+                let wy = way.0;
+                let wx = way.1;
+                let res = recurse(map, (pos.0 + wy as i16, pos.1 + wx as i16), steps + 1, highest);
+                if res > best {
+                    best = res;
                 }
-                best
-            },
-            _ => panic!(),
+            }
+            best
         };
-        set.remove(&pos);
+        map[pos.0 as usize][pos.1 as usize] = Tile::Air;
         res
     }
 
-    let mut set = HashSet::new();
     let mut highest = 0;
 
-    let res = recurse(&map, (0, 1), &mut set, &mut highest);
+    let res = recurse(&mut map, (0, 1), 0, &mut highest);
     println!("res: {} END", res);
 }
