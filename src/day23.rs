@@ -83,10 +83,10 @@ fn day23_1_real() {
 }
 
 pub fn day23_2() {
-    std::thread::Builder::new().stack_size(1024 * 2048).spawn(|| {
+    let j = std::thread::Builder::new().stack_size(1024 * 2048).spawn(|| {
         day23_2_real();
     }).unwrap();
-    loop{}
+    j.join().unwrap();
 }
 
 pub fn day23_2_real() {
